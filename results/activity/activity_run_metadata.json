@@ -1,0 +1,72 @@
+{
+  "task": "activity classification",
+  "correlation_metrics": "deferred: no session peer/pair ground-truth labels",
+  "split_policy": "Existing train/val/test files reused unchanged for every model and seed",
+  "split_files": {
+    "train.csv": {
+      "sha256": "53f0307c2804395d76b13a5062bf9dd075385bc44bffcb68be27c5c48e928401",
+      "sessions": 22187
+    },
+    "val.csv": {
+      "sha256": "f327346c4aac323df46246c80c250ba6fc5f498ee6f07800983a461c7779f9a6",
+      "sessions": 3169
+    },
+    "test.csv": {
+      "sha256": "680ff4a0a60cc2d677c4ad0cf13af90d65a17d4d275ad7965cd1f381eadefe35",
+      "sessions": 6341
+    }
+  },
+  "feature_columns": [
+    "bytes_sent",
+    "bytes_received",
+    "packets_sent",
+    "packets_received",
+    "mean_iat_seconds",
+    "std_iat_seconds",
+    "duration_seconds"
+  ],
+  "classes": [
+    "Discord",
+    "Messenger",
+    "RocketChat",
+    "Signal",
+    "Skype",
+    "Slack",
+    "Teams",
+    "Telegram"
+  ],
+  "seeds": [
+    11,
+    23,
+    42,
+    57,
+    101
+  ],
+  "models": {
+    "B0-majority": "Most frequent training label",
+    "B2-random-forest": {
+      "n_estimators": 400,
+      "max_features": "sqrt",
+      "class_weight": "balanced_subsample"
+    },
+    "B2-bagging": {
+      "n_estimators": 200,
+      "base_estimator": "balanced decision tree, max_features=sqrt",
+      "max_samples": 0.8
+    },
+    "B3-xgboost": {
+      "n_estimators": 600,
+      "max_depth": 5,
+      "learning_rate": 0.05,
+      "early_stopping_rounds": 30,
+      "validation_split": "val",
+      "training_class_weights": "balanced"
+    }
+  },
+  "package_versions": {
+    "python": "3.14.0",
+    "numpy": "2.3.4",
+    "scikit_learn": "1.8.0",
+    "xgboost": "3.4.1"
+  }
+}
