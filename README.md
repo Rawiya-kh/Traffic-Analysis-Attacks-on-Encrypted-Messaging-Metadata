@@ -12,15 +12,18 @@ classification and **SIMULATED PAIRS** correlation experiments.
 dataset/                         Input PCAPNG captures (with .pcap extensions)
 processed_r1/                    Session-level train/val/test feature CSVs
 models/stageA.joblib             Saved Stage A application classifier
+models/fusion_clean_seed*.joblib Reconstructed clean Step 6 fusion models
 results/activity/                Activity baseline metrics
 results/correlation/             Step 5 correlation metrics and ROC data
 results/fusion/                  Step 6 fusion, ablation, joint, and ROC data
+results/step7/                   Step 7 abstention and defence results
 preprocess_r1.py                 Extract R1 features and session splits
 evaluate_activity.py             Activity classification baselines
 step4_simulated_paired_flows.py  SIMULATED PAIRS generation and checks
 step5_correlation_baselines.py   B0/B1/B4 correlation baselines
 step6a_save_stageA.py            Fit/save the selected Stage A model
 step6_imlink_fusion.py           Stage C fusion and evaluation
+step7_abstain_defence.py         Abstention and defence evaluation
 requirements-ml.txt              Python package dependencies
 ```
 
@@ -77,6 +80,11 @@ checkpoint, checks its test macro-F1 against the saved Stage A baseline, then
 fits fusion scalers and logistic regressors using simulated validation groups.
 It does not refit Stage A.
 
+Step 7 reconstructs each clean fusion scaler/classifier from the Step 6 recipe
+and saves it as `models/fusion_clean_seed{seed}.joblib`, because Step 6 did not
+save its fitted clean fusion model. Later Step 7 runs reuse these artifacts and
+stop if their stored recipe does not match.
+
 ## Run only the later correlation/fusion steps
 
 If `processed_r1/`, the activity results, and `models/stageA.joblib` already
@@ -101,6 +109,8 @@ python step6a_save_stageA.py
 - Step 5 correlation table and ROC samples: `results/correlation/`
 - Step 6 fusion, ablation, joint tables, and ROC samples:
   `results/fusion/`
+- Step 7 abstention and defence tables:
+  `results/step7/`
 - ROC CSV files contain 200 points per method and group size. The scripts also
   expose an in-memory `ROC_DATA[(N, method)]` dictionary when called from Python.
 
